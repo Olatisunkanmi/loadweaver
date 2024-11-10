@@ -3,19 +3,18 @@ import {
   createLogger,
   transports,
   format,
-} from "winston";
-import DailyRotateFile from "winston-daily-rotate-file";
-import { deflate } from "zlib";
-import { path } from "app-root-path";
-import { existsSync, mkdirSync } from "fs";
-import { LoggerConfig } from "../types";
+} from 'winston';
+import DailyRotateFile from 'winston-daily-rotate-file';
+import { path } from 'app-root-path';
+import { existsSync, mkdirSync } from 'fs';
+import { LoggerConfig } from './types';
 
 const { combine, timestamp, label, printf, json, colorize, splat } = format;
 
 class LoggerError extends Error {
   constructor(message: string) {
     super(message);
-    this.name = "LoggerError";
+    this.name = 'LoggerError';
   }
 }
 
@@ -35,7 +34,7 @@ class Logger {
   private constructor(config: LoggerConfig) {
     this.label = config.label;
     this.logDirPath = this.initializeLogDirectory(config.logDirPath);
-    this.environment = config.environment?.toLowerCase() || "development";
+    this.environment = config.environment?.toLowerCase() || 'development';
   }
 
   private initializeLogDirectory(dirPath?: string): string {
@@ -55,30 +54,30 @@ class Logger {
   private getTransportOptions(config: LoggerConfig) {
     return {
       console: {
-        level: config.consoleLevel || "debug",
+        level: config.consoleLevel || 'debug',
         handleExceptions: true,
         format: combine(
           colorize(),
           splat(),
           label({ label: this.label }),
-          timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
+          timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
           this.logFormat,
         ),
       },
       file: {
-        level: config.fileLevel || "debug",
+        level: config.fileLevel || 'debug',
         filename: `${this.logDirPath}/${this.environment}-%DATE%-app.log`,
-        maxSize: config.maxSize || "20m",
-        maxFiles: config.maxFiles || "14d",
+        maxSize: config.maxSize || '20m',
+        maxFiles: config.maxFiles || '14d',
         json: true,
-        datePattern: "YYYY-MM-DD",
+        datePattern: 'YYYY-MM-DD',
         zippedArchive: true,
         handleExceptions: true,
         format: combine(
           splat(),
           json(),
           label({ label: this.label }),
-          timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
+          timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
           this.logFormat,
         ),
       },
@@ -92,7 +91,7 @@ class Logger {
 
     const transportOptions = this.getTransportOptions({
       label: this.label,
-      environment: this.environment as "development" | "production" | "test",
+      environment: this.environment as 'development' | 'production' | 'test',
     });
 
     this.logger = createLogger({
