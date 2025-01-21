@@ -4,6 +4,7 @@ import appConfig from './config/app';
 
 const app: Express = express();
 
+
 declare global {
   var logger: ReturnType<typeof Logger.createLogger>;
 }
